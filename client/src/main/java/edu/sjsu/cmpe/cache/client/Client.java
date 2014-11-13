@@ -66,7 +66,14 @@ public class Client {
 		
 	String getValue = caches[bucket].get((Long) mapentry.getKey());
        
-        System.out.println( mapentry.getKey() + " => " + getValue);
+        if (((Long)mapentry.getKey()) < new Long(10))
+	{        
+	System.out.println( mapentry.getKey() + " => " + getValue + "     Chached at : " + "http://localhost:300" + bucket);
+	}	
+	else	 
+	{	
+	System.out.println( mapentry.getKey() + " => " + getValue + "    Chached at : " + "http://localhost:300" + bucket);
+	} 
 	 	 
        }
 
