@@ -1,5 +1,6 @@
 package edu.sjsu.cmpe.cache.client;
 
+import com.google.common.hash.*;
 import java.util.*;
 
 public class Client {
@@ -39,8 +40,14 @@ public class Client {
 	while(iterator.hasNext()) {
         
 	  Map.Entry mapentry = (Map.Entry)iterator.next();  
+	  
+	  /* Using custom hashfunction */
 	  int bucket = ConsistentHash.getHash("MD5", (Long)mapentry.getKey(), caches.length);
           caches[bucket].put((Long) mapentry.getKey(), (String) mapentry.getValue());
+          
+          /* Using Guava Library */
+         // int bucket = Hashing.consistentHash(Hashing.md5().hashLong((Long)mapentry.getKey()), caches.length)
+	 // caches[bucket].put((Long) mapentry.getKey(), (String) mapentry.getValue());
 	}
 
 	/******************************************************************************************************/
@@ -58,23 +65,21 @@ public class Client {
         while(iterator.hasNext()) {
 
         Map.Entry mapentry = (Map.Entry)iterator.next();
+
+	/* Using custom hashfunction */
 	int bucket = ConsistentHash.getHash("MD5", (Long)mapentry.getKey(), caches.length);          
+	String getValue = caches[bucket].get((Long) mapentry.getKey());
+	
+	/* Using Guava Library */
+	// int bucket = Hashing.consistentHash(Hashing.md5().hashLong((Long)mapentry.getKey()), caches.length);
+	// String getValue = caches[bucket].get((Long) mapentry.getKey());
 	
 	if ( bucket == 0 ) { bucket_0_counter++; }
 	else if ( bucket == 1 ) { bucket_1_counter++; }
 	else  { bucket_2_counter++; }
-		
-	String getValue = caches[bucket].get((Long) mapentry.getKey());
-       
-        if (((Long)mapentry.getKey()) < new Long(10))
-	{        
-	System.out.println( mapentry.getKey() + " => " + getValue + "     Chached at : " + "http://localhost:300" + bucket);
-	}	
-	else	 
-	{	
-	System.out.println( mapentry.getKey() + " => " + getValue + "    Chached at : " + "http://localhost:300" + bucket);
-	} 
-	 	 
+	
+   	System.out.println( mapentry.getKey() + " => " + getValue + "    Chached at : " + "http://localhost:300" + bucket);
+	
        }
 
        /******************************************************************************************************/
@@ -83,7 +88,6 @@ public class Client {
         System.out.println("\nBucket 1 : " + bucket_1_counter );
         System.out.println("\nBucket 2 : " + bucket_2_counter + "\n");
     }
-
 
 }
        /******************************************************************************************************/
